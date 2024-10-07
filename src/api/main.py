@@ -7,14 +7,12 @@ from prompty.core import PromptyStream, AsyncPromptyStream
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from tracing import init_tracing
 
 from contoso_chat.chat_request import get_response
 
 base = Path(__file__).resolve().parent
 
 load_dotenv()
-tracer = init_tracing()
 
 app = FastAPI()
 
@@ -25,8 +23,8 @@ if code_space:
     origin_8000= f"https://{code_space}-8000.app.github.dev"
     origin_5173 = f"https://{code_space}-5173.app.github.dev"
     ingestion_endpoint = app_insights.split(';')[1].split('=')[1]
-    
-    origins = [origin_8000, origin_5173, os.getenv("SERVICE_ACA_URI")]
+
+    origins = [origin_8000, origin_5173, os.getenv("API_SERVICE_ACA_URI"), os.getenv("WEB_SERVICE_ACA_URI"), ingestion_endpoint]
 else:
     origins = [
         o.strip()
@@ -45,7 +43,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Hello Microsoft AI Tour"}
 
 
 @app.post("/api/create_response")
